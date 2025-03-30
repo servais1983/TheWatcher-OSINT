@@ -1,9 +1,14 @@
+
+![Thewatcher](thewatcher.png)
+
 # TheWatcher 🔍
 
 Un outil OSINT (Open Source Intelligence) éthique conçu pour la recherche d'informations à partir de photos (reconnaissance faciale) ou de noms (recherche dans les données ouvertes).
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+![License](https://
+img.shields.io
+/badge/license-MIT-green.svg)
 
 ## ⚠️ Avertissement Légal et Éthique
 
@@ -39,14 +44,20 @@ Un outil OSINT (Open Source Intelligence) éthique conçu pour la recherche d'in
 - Docker et Docker Compose
 - Node.js 16+ (pour le frontend)
 
-Pour une liste complète des configurations matérielles et logicielles requises, consultez notre [guide des spécifications techniques](docs/requirements.md).
+Pour une liste complète des configurations matérielles et logicielles requises, consultez notre [guide des spécifications techniques](docs/
+requirements.md
+).
 
 ### Installation Automatisée
 ```bash
-git clone https://github.com/servais1983/TheWatcher-OSINT.git
+git clone 
+https://github.com/
+servais1983/TheWatcher-OSINT.git
 cd TheWatcher-OSINT
-chmod +x install.sh
-./install.sh
+chmod +x 
+install.sh
+./
+install.sh
 ```
 
 ### Installation Manuelle
