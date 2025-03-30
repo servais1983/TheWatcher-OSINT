@@ -39,6 +39,8 @@ Un outil OSINT (Open Source Intelligence) éthique conçu pour la recherche d'in
 - Docker et Docker Compose
 - Node.js 16+ (pour le frontend)
 
+Pour une liste complète des configurations matérielles et logicielles requises, consultez notre [guide des spécifications techniques](docs/requirements.md).
+
 ### Installation Automatisée
 ```bash
 git clone https://github.com/servais1983/TheWatcher-OSINT.git
@@ -93,6 +95,8 @@ Accédez à `http://localhost:3000` pour utiliser l'interface graphique.
 ### API
 Documentation de l'API disponible à `http://localhost:5000/api/docs`.
 
+Pour des instructions d'utilisation détaillées, consultez notre [guide d'utilisation](docs/usage.md).
+
 ## 🔒 Sécurité et Conformité
 
 TheWatcher intègre plusieurs fonctionnalités de sécurité :
@@ -103,11 +107,14 @@ TheWatcher intègre plusieurs fonctionnalités de sécurité :
 - Vérification des cas d'usage avant chaque requête
 - Respect des délais entre requêtes pour éviter la détection
 
+Pour plus d'informations sur le cadre légal et éthique, consultez notre [documentation juridique](docs/legal.md).
+
 ## 📚 Documentation
 
 Une documentation complète est disponible dans le dossier `/docs` :
 
 - [Guide d'installation détaillé](docs/installation.md)
+- [Spécifications techniques requises](docs/requirements.md)
 - [Guide d'utilisation](docs/usage.md)
 - [API Reference](docs/api.md)
 - [Cadre légal et éthique](docs/legal.md)
@@ -119,7 +126,7 @@ Les contributions sont les bienvenues ! Veuillez consulter [CONTRIBUTING.md](CON
 
 ## 📝 Licence
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet est sous licence MIT avec des conditions supplémentaires concernant l'utilisation éthique - voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ## 📊 Cas d'Usage Légitimes
 
@@ -134,6 +141,22 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 - Usurpation d'identité
 - Espionnage illégal
 - Toute activité violant les lois locales sur la vie privée
+
+## 🖥️ Configuration Requise
+
+### Minimum
+- CPU: Dual-core 2+ GHz
+- RAM: 4 Go
+- Espace disque: 5 Go
+- Connexion Internet: 5+ Mbps
+
+### Recommandé
+- CPU: Quad-core 3+ GHz
+- RAM: 8+ Go
+- Espace disque: 20+ Go (SSD préférable)
+- Connexion Internet: 20+ Mbps
+
+Pour des spécifications détaillées, consultez notre [guide des prérequis techniques](docs/requirements.md).
 
 ---
 
