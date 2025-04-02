@@ -5,7 +5,7 @@ def get_version():
 
 setup(
     name="thewatcher-osint",
-    version=get_version(),
+    version="0.1.0",  # Version explicite
     packages=find_packages(),
     install_requires=[
         # Framework web
