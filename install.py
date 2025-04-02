@@ -5,10 +5,10 @@ import platform
 import subprocess
 import venv
 
-def run_command(command):
+def run_command(command, shell=True):
     """Exécute une commande système."""
     try:
-        result = subprocess.run(command, shell=True, check=True, 
+        result = subprocess.run(command, shell=shell, check=True, 
                                 stdout=subprocess.PIPE, 
                                 stderr=subprocess.PIPE, 
                                 text=True)
@@ -22,15 +22,15 @@ def install_system_dependencies():
     """Installe les dépendances système selon la plateforme."""
     system = platform.system().lower()
     
-    if system == 'linux':
-        # Pour Debian/Ubuntu/Kali
-        run_command('sudo apt-get update')
-        run_command('sudo apt-get install -y python3-pip python3-venv docker docker-compose git build-essential')
-    
-    elif system == 'windows':
-        # Pour Windows, on suppose que Python et pip sont déjà installés
-        run_command('pip install --upgrade pip')
+    if system == 'windows':
+        # Pour Windows, on utilise pip et winget si possible
+        run_command('python -m pip install --upgrade pip')
         print("Assurez-vous d'avoir Docker Desktop installé.")
+    
+    elif system == 'linux':
+        # Pour les systèmes Linux
+        run_command('sudo apt-get update')
+        run_command('sudo apt-get install -y python3-pip python3-venv docker docker-compose git')
     
     else:
         print(f"Système {system} non supporté.")
@@ -46,34 +46,54 @@ def create_virtual_env():
     
     return venv_path
 
-def activate_venv(venv_path):
+def activate_virtual_env(venv_path):
     """Active l'environnement virtuel."""
-    if platform.system().lower() == 'windows':
-        activate_this = os.path.join(venv_path, 'Scripts', 'activate_this.py')
-    else:
-        activate_this = os.path.join(venv_path, 'bin', 'activate_this.py')
+    system = platform.system().lower()
     
-    exec(open(activate_this).read(), {'__file__': activate_this})
+    if system == 'windows':
+        activate_path = os.path.join(venv_path, 'Scripts', 'activate')
+        return f'"{activate_path}"'
+    else:
+        activate_path = os.path.join(venv_path, 'bin', 'activate')
+        return f'source "{activate_path}"'
 
 def install_python_dependencies():
     """Installe les dépendances Python."""
     run_command('pip install -r requirements.txt')
-    
+
 def setup_docker():
     """Configure et lance les services Docker."""
-    run_command('docker-compose up -d')
+    try:
+        run_command('docker-compose up -d')
+    except Exception as e:
+        print("Erreur lors du démarrage de Docker :")
+        print(str(e))
+        print("Assurez-vous que Docker Desktop est installé et en cours d'exécution.")
 
 def main():
     print("🚀 Installation de TheWatcher-OSINT 🚀")
     
+    # Changement de répertoire de travail
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(script_dir)
+    
     install_system_dependencies()
     venv_path = create_virtual_env()
-    activate_venv(venv_path)
+    
+    # Commande d'activation de l'environnement virtuel
+    activate_cmd = activate_virtual_env(venv_path)
+    print(f"\nActivez l'environnement virtuel avec : {activate_cmd}")
+    
+    # Installation des dépendances
     install_python_dependencies()
+    
+    # Configuration Docker
     setup_docker()
     
     print("\n✅ Installation terminée avec succès !")
-    print("Lancez l'application avec : python backend/app.py")
+    print("Étapes suivantes :")
+    print("1. Activez l'environnement virtuel")
+    print("2. Lancez l'application avec : python backend/app.py")
 
 if __name__ == '__main__':
     main()
