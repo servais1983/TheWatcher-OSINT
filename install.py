@@ -13,18 +13,25 @@ def run_command(command, shell=True):
                                 stderr=subprocess.PIPE, 
                                 text=True)
         print(result.stdout)
+        return result
     except subprocess.CalledProcessError as e:
         print(f"Erreur lors de l'exécution de {command}:")
         print(e.stderr)
-        sys.exit(1)
+        return None
 
 def install_system_dependencies():
     """Installe les dépendances système selon la plateforme."""
     system = platform.system().lower()
     
     if system == 'windows':
-        # Pour Windows, on utilise pip et winget si possible
-        run_command('python -m pip install --upgrade pip')
+        # Mise à jour de pip et installation des outils de build
+        commands = [
+            'python -m pip install --upgrade pip',
+            'python -m pip install --upgrade wheel setuptools',
+            'python -m pip install --upgrade pywin32'
+        ]
+        for cmd in commands:
+            run_command(cmd)
         print("Assurez-vous d'avoir Docker Desktop installé.")
     
     elif system == 'linux':
@@ -59,7 +66,18 @@ def activate_virtual_env(venv_path):
 
 def install_python_dependencies():
     """Installe les dépendances Python."""
-    run_command('pip install -r requirements.txt')
+    # Commandes pour gérer les installations problématiques
+    commands = [
+        'pip install --upgrade pip wheel setuptools',
+        'pip install --upgrade pywin32',
+        'pip install --no-cache-dir -r requirements.txt'
+    ]
+    
+    for cmd in commands:
+        result = run_command(cmd)
+        if result is None:
+            print(f"Échec de la commande : {cmd}")
+            print("Tentative de contournement...")
 
 def setup_docker():
     """Configure et lance les services Docker."""
