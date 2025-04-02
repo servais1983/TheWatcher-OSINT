@@ -8,13 +8,17 @@ Flask-JWT-Extended==4.5.3
 gunicorn==21.2.0
 Werkzeug==2.3.7
 
-# Base de données - Compatibilité Windows
-psycopg2-binary==2.9.7  # Version binaire précompilée
+# Base de données - Compatibilité multiplateforme
+psycopg2-binary==2.9.7 --only-binary=:all:  # Installation binaire uniquement
 SQLAlchemy==2.0.22
 elasticsearch==7.17.9
 redis==5.0.1
 Flask-SQLAlchemy==3.1.1
 alembic==1.12.0
+
+# Option alternative de base de données
+# Uncomment si PostgreSQL pose problème
+# sqlite3  # Déjà inclus dans la bibliothèque standard Python
 
 # Sécurité
 PyJWT==2.8.0
@@ -35,9 +39,9 @@ Pillow==10.0.1
 exifread==3.0.0
 boto3==1.28.53
 
-# Dépendances spécifiques à Windows
-wheel==0.43.0  # Améliore l'installation des packages
-setuptools==69.2.0  # Mise à jour de setuptools
+# Utilitaires de build et de compatibilité
+wheel==0.43.0
+setuptools==69.2.0
 
 # Web scraping et OSINT
 beautifulsoup4==4.12.2
@@ -79,7 +83,7 @@ python-Levenshtein==0.21.1
 python-dateutil==2.8.2
 validators==0.22.0
 
-# Dépendances Windows spécifiques
+# Dépendances spécifiques à Windows
 pywin32==306; sys_platform == 'win32'
 
 # Documentation
@@ -89,3 +93,7 @@ apispec==6.3.0
 # Tests
 pytest==7.4.2
 pytest-cov==4.1.0
+
+# Notes pour l'installation :
+# - Utilisez 'pip install -r requirements.txt --only-binary=:all:'
+# - En cas de problèmes, consultez la documentation d'installation
