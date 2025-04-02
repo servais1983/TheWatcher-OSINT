@@ -1,157 +1,68 @@
 version: '3.8'
 
 services:
-  # Base de données PostgreSQL
-  postgres:
-    image: postgres:14-alpine
-    container_name: thewatcher-postgres
-    restart: unless-stopped
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
     environment:
-      POSTGRES_USER: thewatcher
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeMe!}
+      - DATABASE_URL=postgres://user:password@db:5432/thewatcher
+    depends_on:
+      - db
+      - redis
+    networks:
+      - thewatcher_network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - thewatcher_network
+
+  db:
+    image: postgres:13
+    environment:
       POSTGRES_DB: thewatcher
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-scripts/postgres:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
-      - thewatcher-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U thewatcher"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - thewatcher_network
 
-  # Elasticsearch pour la recherche rapide
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
-    container_name: thewatcher-elasticsearch
-    restart: unless-stopped
-    environment:
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-    networks:
-      - thewatcher-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  # Redis pour la mise en cache et les files d'attente
   redis:
-    image: redis:6-alpine
-    container_name: thewatcher-redis
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD:-changeMe!}
-    volumes:
-      - redis_data:/data
+    image: redis:6.2-alpine
     ports:
       - "6379:6379"
     networks:
-      - thewatcher-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - thewatcher_network
 
-  # Reverse proxy pour protéger les services
-  nginx:
-    image: nginx:alpine
-    container_name: thewatcher-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
-      - ./nginx/certs:/etc/nginx/certs
-      - ./nginx/www:/var/www/html
-    networks:
-      - thewatcher-network
-    depends_on:
-      - backend
-      - frontend
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  # Backend API (décommenter pour déployer avec Docker)
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   container_name: thewatcher-backend
-  #   restart: unless-stopped
-  #   environment:
-  #     - DATABASE_URL=postgresql://thewatcher:${POSTGRES_PASSWORD:-changeMe!}@postgres:5432/thewatcher
-  #     - ELASTIC_URL=http://elasticsearch:9200
-  #     - REDIS_URL=redis://:${REDIS_PASSWORD:-changeMe!}@redis:6379/0
-  #     - JWT_SECRET=${JWT_SECRET:-changeMe!}
-  #     - API_KEY=${API_KEY:-changeMe!}
-  #   volumes:
-  #     - ./backend:/app
-  #     - ./logs:/app/logs
-  #     - ./uploads:/app/uploads
-  #   ports:
-  #     - "5000:5000"
-  #   networks:
-  #     - thewatcher-network
-  #   depends_on:
-  #     - postgres
-  #     - elasticsearch
-  #     - redis
-
-  # Frontend (décommenter pour déployer avec Docker)
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: thewatcher-frontend
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./frontend:/app
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - thewatcher-network
-  #   depends_on:
-  #     - backend
-
-  # Service de proxy (pour le web scraping)
-  proxy-pool:
-    image: hatamiarash7/rotate-proxy
-    container_name: thewatcher-proxy-pool
-    restart: unless-stopped
-    ports:
-      - "8888:8080"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
     environment:
-      - PROXY_LIST_URL=${PROXY_LIST_URL:-}
-      - PROXY_FILE=/proxies.txt
-    volumes:
-      - ./proxy/proxies.txt:/proxies.txt
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
     networks:
-      - thewatcher-network
+      - thewatcher_network
+
+networks:
+  thewatcher_network:
+    driver: bridge
 
 volumes:
   postgres_data:
-  elasticsearch_data:
-  redis_data:
-
-networks:
-  thewatcher-network:
-    driver: bridge
+  frontend_node_modules:
